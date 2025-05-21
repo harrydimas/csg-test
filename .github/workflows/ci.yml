@@ -1,4 +1,4 @@
-name: Java CI
+name: csg-test CI
 
 on:
   push:
