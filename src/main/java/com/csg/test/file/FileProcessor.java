@@ -1,5 +1,6 @@
 package com.csg.test.file;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.logging.Logger;
 public abstract class FileProcessor {
 
     private static final Logger log = Logger.getLogger(FileProcessor.class.getName());
+    protected static final int BUFFER_SIZE = 128;
 
     protected String[] words;
     protected String filePath;
@@ -22,6 +24,18 @@ public abstract class FileProcessor {
         log.info("checkFile = " + filePath);
         File file = new File(filePath);
         if (!file.exists()) throw new FileException("file not exists.");
+    }
+
+    protected String processReader(BufferedReader reader) throws Exception {
+        char[] buffer = new char[BUFFER_SIZE];
+        int charsRead;
+        StringBuilder wordBuilder = new StringBuilder();
+
+        while ((charsRead = reader.read(buffer)) != -1) {
+            wordBuilder.append(buffer, 0, charsRead);
+        }
+
+        return wordBuilder.toString();
     }
 
     protected void validateText(String text) {

@@ -3,6 +3,8 @@ package com.csg.test.file;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.BufferedReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -15,14 +17,15 @@ public class HtmlFileProcessor extends FileProcessor {
     @Override
     public void extractText() {
         checkFile();
-        try {
-            String html = Files.readString(Paths.get(filePath));
-            Document doc = Jsoup.parse(html);
+
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8)) {
+            String content = processReader(reader);
+            Document doc = Jsoup.parse(content);
             String text = doc.text();
             validateText(text);
-            words = text.split("\\W+");
+            this.words = text.split("\\W+");
         } catch (Exception e) {
-            throw new FileException(e.getMessage());
+            throw new FileException("Error reading HTML file: " + e.getMessage());
         }
     }
 }
